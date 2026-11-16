@@ -22,6 +22,8 @@ os.environ["DATABASE_URL"] = f"sqlite:///{(TMP / 'test.db').as_posix()}"
 os.environ["UPLOAD_DIR"] = str(TMP / "uploads")
 os.environ["AI_MODE"] = "demo"
 os.environ["ANTHROPIC_API_KEY"] = ""
+os.environ["DEMO_MODE"] = "true"
+os.environ["ENVIRONMENT"] = "testing"
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
 

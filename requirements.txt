@@ -1,0 +1,2 @@
+# ReStartHer Root Requirements (Mirrors backend/requirements.txt)
+-r backend/requirements.txt

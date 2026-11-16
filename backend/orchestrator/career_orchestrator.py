@@ -408,27 +408,15 @@ class CareerOrchestrator:
         out = s["profile_out"]
         target = resolve_role(out["profile"].get("target_role"))
         if not target or target not in ROLES:
-            # Intelligent fallback & skill-based suggestion so missing info doesn't block the comeback plan
-            raw_skills = self.skills("technical") or out.get("profile", {}).get("skills", [])
-            skills = [sk if isinstance(sk, str) else getattr(sk, "name", str(sk)) for sk in raw_skills]
-            suggestions = suggest_roles(skills) if skills else []
-            if suggestions and suggestions[0] in ROLES:
-                target = suggestions[0]
-            elif out.get("profile", {}).get("previous_role"):
-                target = resolve_role(out["profile"]["previous_role"]) or "Full Stack Developer"
-            else:
-                target = "Full Stack Developer"
-
-            out["profile"]["target_role"] = target
-            prof_model = self.profile_model()
-            if prof_model:
-                prof_model.target_role = target
-                if not prof_model.career_break_years:
-                    prof_model.career_break_years = 2.0
-                if not prof_model.career_break_reason:
-                    prof_model.career_break_reason = "Career break for family care / skill transition"
-                self.db.add(prof_model)
-                self.db.flush()
+            missing_text = ", ".join(out.get("missing", [])) or "target_role"
+            self._decide(
+                f"Target role is not set or not recognised (missing: {missing_text}). Asking learner to clarify target role before generating skill gap and roadmap.",
+                next_agent="profile",
+                action="Evaluated profile completeness",
+                input_summary={"missing": out.get("missing", [])},
+                output_summary={"route": "clarify", "needs_clarification": True, "suggested_roles": out.get("suggested_roles", [])},
+            )
+            return {"route": "clarify", "needs_clarification": True}
 
         missing_other = [m for m in out.get("missing", []) if m != "target_role"]
         decision = f"Profile is verified and ready for roadmap generation (target track: {target})."

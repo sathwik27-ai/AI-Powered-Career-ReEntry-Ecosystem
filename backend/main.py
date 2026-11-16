@@ -51,12 +51,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+cors_kwargs: dict = {
+    "allow_methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    "allow_headers": ["*"],
+    "allow_credentials": True,
+}
+if "*" in settings.cors_origins:
+    cors_kwargs["allow_origins"] = ["*"]
+    cors_kwargs["allow_credentials"] = False
+else:
+    cors_kwargs["allow_origins"] = settings.cors_origins
+    if getattr(settings, "cors_origin_regex", None):
+        cors_kwargs["allow_origin_regex"] = settings.cors_origin_regex
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=False,
-    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
+    **cors_kwargs,
 )
 
 register_error_handlers(app)

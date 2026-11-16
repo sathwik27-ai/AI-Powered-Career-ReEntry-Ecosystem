@@ -36,8 +36,12 @@ import type {
   UserAgents,
 } from "./types";
 
-/** Backend origin, e.g. http://127.0.0.1:8000. Set VITE_API_BASE_URL in frontend/.env. */
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
+/** Backend origin, e.g. https://restarther-api.onrender.com. Set VITE_API_BASE_URL in Vercel or frontend/.env. */
+let rawApiUrl = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").trim().replace(/\/+$/, "");
+if (rawApiUrl.endsWith("/api")) {
+  rawApiUrl = rawApiUrl.slice(0, -4);
+}
+export const API_BASE_URL = rawApiUrl;
 
 export class ApiError extends Error {
   readonly status: number;

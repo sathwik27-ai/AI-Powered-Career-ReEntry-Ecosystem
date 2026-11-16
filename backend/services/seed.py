@@ -171,6 +171,12 @@ def seed_users_and_demo(db: Session) -> None:
         db.refresh(admin)
         db.add(UserSettings(user_id=admin.id, theme="light"))
         db.commit()
+        log.info("Admin account seeded: %s", admin_email)
+
+    # In production (DEMO_MODE=false), do not create or restore demo accounts
+    if not settings.demo_mode:
+        log.info("Production mode active (DEMO_MODE=false): skipping demo trainer and demo learner accounts.")
+        return
 
     # 2. Demo Trainer
     trainer_email = "trainer@restarther.org"

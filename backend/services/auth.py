@@ -8,13 +8,15 @@ import bcrypt
 import jwt
 
 import os
+import sys
 from config import settings
 
 
 def hash_password(password: str) -> str:
     """Hash a plaintext password using bcrypt (accelerated in test environments)."""
     pw_bytes = password.encode("utf-8")
-    rounds = 4 if os.getenv("STORAGE_DIR", "").startswith(tempfile_prefix := "") and "tests" in os.getenv("STORAGE_DIR", "") else 12
+    is_test = "pytest" in sys.modules or "PYTEST_CURRENT_TEST" in os.environ or "tests" in os.getenv("STORAGE_DIR", "")
+    rounds = 4 if is_test else 12
     salt = bcrypt.gensalt(rounds=rounds)
     return bcrypt.hashpw(pw_bytes, salt).decode("utf-8")
 

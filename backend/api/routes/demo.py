@@ -4,12 +4,13 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from api.dependencies import db_session
 from api.routes.users import process_resume, user_out
+from config import settings
 from models import User
 from orchestrator.career_orchestrator import CareerOrchestrator
 
@@ -50,6 +51,11 @@ def sample_resume(fmt: str) -> FileResponse:
 @router.post("/priya", status_code=201)
 def load_priya(db: Session = Depends(db_session)) -> dict[str, Any]:
     """Create a fresh demo user and run her sample PDF resume through the real comeback workflow."""
+    if not settings.demo_mode:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Demo persona generation is disabled when DEMO_MODE is false.",
+        )
     path = _sample("pdf")
     user = User(name="Priya (demo)", is_demo=True)
     db.add(user)
@@ -64,6 +70,11 @@ def load_priya(db: Session = Depends(db_session)) -> dict[str, Any]:
 @router.post("/priya/reset")
 def reset_priya(db: Session = Depends(db_session)) -> dict[str, Any]:
     """Restore the seeded Priya Raman (priya@restarther.org) back to her pristine demo profile."""
+    if not settings.demo_mode:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Demo reset is disabled when DEMO_MODE is false.",
+        )
     from services.seed import restore_demo_priya
     restore_demo_priya(db)
     return {"status": "ok", "message": "Priya Raman demo profile restored to pristine state."}

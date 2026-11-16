@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from api.dependencies import db_session, get_current_user
+from config import settings
 from models import Profile, User, UserSettings
 from schemas import AuthResponse, ForgotPasswordRequest, LoginRequest, RegisterRequest, ResetPasswordRequest, UserAuthOut
 from services.auth import create_access_token, decode_access_token, hash_password, verify_password
@@ -169,11 +170,14 @@ def forgot_password(body: ForgotPasswordRequest, db: Session = Depends(db_sessio
         }
 
     reset_token = create_access_token({"sub": str(user.id), "purpose": "reset_password"})
-    return {
+    response = {
         "status": "ok",
-        "message": "Password reset token generated.",
-        "reset_token": reset_token,  # provided in demo mode for frictionless testing
+        "message": "If an account with that email exists, password reset instructions have been sent.",
     }
+    # Only expose the reset token in the response when DEMO_MODE is active (for automated local test suites)
+    if settings.demo_mode:
+        response["reset_token"] = reset_token
+    return response
 
 
 @router.post("/reset-password")

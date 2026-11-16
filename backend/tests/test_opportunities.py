@@ -1,3 +1,6 @@
+from knowledge.opportunities import DEMO_OPPORTUNITIES
+
+
 def _list(client, uid, **params):
     r = client.get(f"/api/users/{uid}/opportunities", params=params)
     assert r.status_code == 200, r.text
@@ -6,7 +9,7 @@ def _list(client, uid, **params):
 
 def test_demo_listings_clearly_labelled_and_never_linked(client, priya_id):
     data = _list(client, priya_id)
-    assert data["count"] == 14
+    assert data["count"] == len(DEMO_OPPORTUNITIES)
     assert "not real vacancies" in data["disclaimer"]
     for o in data["results"]:
         assert o["is_demo"] is True and o["source"] == "demo"
