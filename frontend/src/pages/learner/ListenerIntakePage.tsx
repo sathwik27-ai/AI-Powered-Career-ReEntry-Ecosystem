@@ -3,15 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   Sparkles,
   FileText,
-  Bot,
-  Columns,
   CheckCircle2,
   Upload,
   ArrowRight,
-  Briefcase,
-  Clock,
-  BookOpen,
-  UserCheck,
   AlertCircle,
   Plus,
   X,
@@ -55,7 +49,7 @@ const BREAK_REASONS = [
 export function ListenerIntakePage() {
   const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"form" | "chat" | "both">("form");
+  const [showAgent, setShowAgent] = useState(true);
 
   // Form State
   const [targetRole, setTargetRole] = useState("Backend Developer");
@@ -204,40 +198,22 @@ export function ListenerIntakePage() {
           </p>
         </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex items-center rounded-2xl border border-line bg-surface p-1 shadow-xs">
+        {/* Action Controls (Uniform with other AI Agents) */}
+        <div className="flex items-center gap-2">
+          <a
+            href="#intake-form"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2 text-xs font-bold text-ink-soft hover:bg-paper-deep transition shadow-xs"
+          >
+            <FileText className="h-3.5 w-3.5 text-jelly-aqua" />
+            <span>Intake Form & Resume</span>
+          </a>
           <button
             type="button"
-            onClick={() => setActiveTab("form")}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${activeTab === "form"
-              ? "bg-gradient-to-r from-jelly-aqua to-jelly-purple text-white shadow-xs"
-              : "text-ink-soft hover:text-ink"
-              }`}
+            onClick={() => setShowAgent(!showAgent)}
+            className="jelly-btn inline-flex items-center gap-2 bg-gradient-to-r from-jelly-aqua to-jelly-purple px-5 py-2.5 text-xs font-bold text-white shadow-sm"
           >
-            <FileText className="h-3.5 w-3.5" />
-            <span>Intake Form</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("chat")}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${activeTab === "chat"
-              ? "bg-gradient-to-r from-jelly-aqua to-jelly-purple text-white shadow-xs"
-              : "text-ink-soft hover:text-ink"
-              }`}
-          >
-            <Bot className="h-3.5 w-3.5" />
-            <span>AI Chatbot</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("both")}
-            className={`hidden lg:inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${activeTab === "both"
-              ? "bg-gradient-to-r from-jelly-aqua to-jelly-purple text-white shadow-xs"
-              : "text-ink-soft hover:text-ink"
-              }`}
-          >
-            <Columns className="h-3.5 w-3.5" />
-            <span>Side-by-Side</span>
+            <Sparkles className="h-4 w-4" />
+            {showAgent ? "Hide Profile Intake AI" : "Chat with Profile Intake AI"}
           </button>
         </div>
       </div>
@@ -264,11 +240,20 @@ export function ListenerIntakePage() {
         </div>
       )}
 
-      {/* Main Container */}
-      <div className={`grid gap-6 ${activeTab === "both" ? "grid-cols-1 lg:grid-cols-12" : "grid-cols-1"}`}>
-        {/* Form Column */}
-        {(activeTab === "form" || activeTab === "both") && (
-          <div className={`${activeTab === "both" ? "lg:col-span-6" : "max-w-4xl mx-auto w-full"}`}>
+      {/* Embedded Live Profile Intake AI Agent (Full-width & standard with other 5 agents) */}
+      {showAgent && (
+        <JotformAgent
+          agentId="01a1de02216070008ef9ea7886d80c2c3a1d"
+          agentKey="profile_intake"
+          agentName="ReStartHer Profile Intake"
+          accentColor="#2FC9E3"
+          description="Welcomes you to ReStartHer, captures your background, previous experience, and maps your career comeback goals."
+          height="680px"
+        />
+      )}
+
+      {/* Intake Form & Automated Resume Parser Section */}
+      <div id="intake-form" className="max-w-4xl mx-auto w-full space-y-6 pt-2">
             <form onSubmit={handleSaveProfile} className="card p-6 sm:p-8 bg-surface border border-line shadow-jelly space-y-6">
               <div className="border-b border-line pb-4 flex items-center justify-between">
                 <div>
@@ -484,22 +469,6 @@ export function ListenerIntakePage() {
                 </button>
               </div>
             </form>
-          </div>
-        )}
-
-        {/* Chatbot Column */}
-        {(activeTab === "chat" || activeTab === "both") && (
-          <div className={`${activeTab === "both" ? "lg:col-span-6" : "max-w-4xl mx-auto w-full"}`}>
-            <JotformAgent
-              agentId="01a1de02216070008ef9ea7886d80c2c3a1d"
-              agentKey="profile_intake"
-              agentName="ReStartHer Profile Intake"
-              accentColor="#2FC9E3"
-              description="Assists with onboarding, previous work experience, education, and career comeback goals."
-              height="740px"
-            />
-          </div>
-        )}
       </div>
     </div>
   );

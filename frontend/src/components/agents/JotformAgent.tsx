@@ -99,6 +99,7 @@ export function JotformAgent({
       case "profile_intake":
         return `Hi! My name is ${learnerName}. I am re-entering the tech workforce after a ${breakYears}-year career break (${breakReason}). My previous role was ${prevRole}, and I am targeting ${targetRole}. My prior skills include: ${skillsText}. Please review my background and guide my comeback plan.`;
       case "skill_gap":
+      case "skill_gap_explainer":
         return `Hi! My name is ${learnerName}. I am preparing to return as a ${targetRole}. My existing skills are ${skillsText}, and my identified learning gaps are ${gapsText}. Please explain which skills I should prioritize and why.`;
       case "tutor_coach":
         return `Hi Tutor Coach! I am ${learnerName}, preparing for ${targetRole} after a ${breakYears}-year break. Please teach me ${gapsList[0]?.skill || "my primary skill gap"} with clear explanations, step-by-step code examples, and practice questions.`;
@@ -218,12 +219,21 @@ export function JotformAgent({
                 </>
               )}
             </button>
-            <Link
-              to="/app/intake"
-              className="text-[11px] font-bold text-plum-600 hover:underline"
-            >
-              Edit Profile
-            </Link>
+            {agentKey !== "profile_intake" ? (
+              <Link
+                to="/app/intake"
+                className="text-[11px] font-bold text-plum-600 hover:underline"
+              >
+                Edit Profile
+              </Link>
+            ) : (
+              <a
+                href="#intake-form"
+                className="text-[11px] font-bold text-plum-600 hover:underline"
+              >
+                Intake Form & Resume ↓
+              </a>
+            )}
           </div>
         </div>
       </div>
