@@ -12,16 +12,29 @@ import {
   Clock,
   UserPlus,
   X,
+  Video,
 } from "lucide-react";
 import { api } from "../../api/client";
 import { useAuth } from "../../context/AuthContext";
 import type { TrainerListenerItem } from "../../api/types";
+import { VideoCallModal, SessionData } from "../../components/trainer/VideoCallModal";
 
 export function TrainerDashboard() {
   const { user } = useAuth();
   const [listeners, setListeners] = useState<TrainerListenerItem[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeCallSession, setActiveCallSession] = useState<SessionData | null>(null);
+
+  const upcomingSession: SessionData = {
+    id: 1,
+    learner: "Priya Raman",
+    targetRole: "Backend Developer",
+    topic: "1-on-1 Code Review: Spring Boot REST Architecture",
+    time: "Tomorrow, 4:00 PM IST",
+    status: "confirmed",
+    link: "https://meet.google.com/new",
+  };
 
   // Colleague Modal state
   const [showColleagueModal, setShowColleagueModal] = useState(false);
@@ -262,7 +275,56 @@ export function TrainerDashboard() {
             <Calendar className="h-4 w-4 text-jelly-blueberry" />
           </div>
           <div className="mt-2 text-2xl font-extrabold text-ink">3</div>
-          <div className="mt-1 text-xs text-ink-soft">1-on-1 mentorship reviews</div>
+          <Link to="/trainer/sessions" className="mt-1 text-xs text-plum-600 hover:underline block font-semibold">
+            View all 3 sessions →
+          </Link>
+        </div>
+      </div>
+
+      {/* Next Upcoming 1-on-1 Mentorship Session Spotlight */}
+      <div className="card relative overflow-hidden bg-gradient-to-r from-emerald-500/10 via-jelly-lime/10 to-transparent p-5 sm:p-6 border border-emerald-500/20 shadow-jelly">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-jelly-lime to-emerald-600 text-white shadow-md">
+              <Video className="h-6 w-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="eyebrow text-emerald-600 dark:text-emerald-400">Next Scheduled Session</span>
+                <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+                  Confirmed
+                </span>
+              </div>
+              <h3 className="text-base font-extrabold text-ink mt-0.5">
+                {upcomingSession.topic}
+              </h3>
+              <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-ink-soft">
+                <span className="font-bold text-ink">Learner: {upcomingSession.learner} ({upcomingSession.targetRole})</span>
+                <span>•</span>
+                <div className="flex items-center gap-1.5 font-medium">
+                  <Clock className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>{upcomingSession.time}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setActiveCallSession(upcomingSession)}
+              className="jelly-btn inline-flex items-center gap-2 bg-gradient-to-r from-jelly-lime to-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-lift hover:opacity-95 transition"
+            >
+              <Video className="h-4 w-4" />
+              <span>Join Video Call</span>
+            </button>
+            <Link
+              to="/trainer/sessions"
+              className="rounded-xl border border-line bg-surface px-4 py-2.5 text-xs font-bold text-ink hover:bg-paper-deep transition"
+            >
+              All Sessions
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -348,6 +410,14 @@ export function TrainerDashboard() {
           </div>
         )}
       </div>
+
+      {/* Interactive Video Call Modal */}
+      {activeCallSession && (
+        <VideoCallModal
+          session={activeCallSession}
+          onClose={() => setActiveCallSession(null)}
+        />
+      )}
     </div>
   );
 }
