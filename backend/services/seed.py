@@ -172,6 +172,13 @@ def seed_users_and_demo(db: Session) -> None:
         db.add(UserSettings(user_id=admin.id, theme="light"))
         db.commit()
         log.info("Admin account seeded: %s", admin_email)
+    else:
+        # Synchronize admin password with environment configuration
+        # Ensures that updating ADMIN_PASSWORD in Render updates the database
+        admin.hashed_password = hash_password(settings.admin_password)
+        admin.is_active = True
+        db.commit()
+        log.info("Admin account password synchronized with environment configuration for %s", admin_email)
 
     # In production (DEMO_MODE=false), do not create or restore demo accounts
     if not settings.demo_mode:

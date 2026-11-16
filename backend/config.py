@@ -47,9 +47,15 @@ class Settings:
                 raise ValueError("DATABASE_URL in production contains an unconfigured placeholder password. Please provide valid Neon PostgreSQL credentials.")
             raw_db_url = default_db
 
-        # URI normalization: Neon / Heroku / Render provide postgres:// which SQLAlchemy 2.x requires as postgresql://
+        # PostgreSQL URI normalization:
+        # Neon / Render / Heroku supply postgres://, postgresql://, postgresql+psycopg://, or postgresql+psycopg2://.
+        # We explicitly normalize all PostgreSQL URLs to use the psycopg2 driver (psycopg2-binary).
         if raw_db_url.startswith("postgres://"):
-            raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
+            raw_db_url = "postgresql+psycopg2://" + raw_db_url[len("postgres://"):]
+        elif raw_db_url.startswith("postgresql+psycopg://"):
+            raw_db_url = "postgresql+psycopg2://" + raw_db_url[len("postgresql+psycopg://"):]
+        elif raw_db_url.startswith("postgresql://"):
+            raw_db_url = "postgresql+psycopg2://" + raw_db_url[len("postgresql://"):]
         elif raw_db_url.startswith("sqlite:///") and not raw_db_url.startswith("sqlite:////") and ":memory:" not in raw_db_url:
             raw_path = raw_db_url[len("sqlite:///"):]
             p = Path(raw_path)
@@ -73,18 +79,33 @@ class Settings:
         self.jwt_algorithm: str = "HS256"
         self.access_token_expire_minutes: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 
-        # Admin User Provisioning
-        self.admin_email: str = os.getenv("ADMIN_EMAIL", "admin@restarther.org").strip().lower()
-        self.admin_password: str = os.getenv("ADMIN_PASSWORD", "AdminSecure123!").strip()
-        if self.is_production and self.admin_password == "AdminSecure123!":
-            log.warning("SECURITY WARNING: Using default ADMIN_PASSWORD in production. Set ADMIN_PASSWORD in Render environment variables.")
-
         # Demo Mode (defaults to false in production unless explicitly enabled; defaults to true in local development)
         demo_env = os.getenv("DEMO_MODE")
         if demo_env is not None:
             self.demo_mode: bool = demo_env.strip().lower() in ("true", "1", "yes")
         else:
             self.demo_mode: bool = not self.is_production
+
+        # Admin User Provisioning
+        self.admin_email: str = (os.getenv("ADMIN_EMAIL") or "admin@restarther.org").strip().lower()
+        env_admin_pwd = os.getenv("ADMIN_PASSWORD")
+        clean_admin_pwd = env_admin_pwd.strip().strip("'\"") if env_admin_pwd else ""
+
+        if self.is_production and not self.demo_mode:
+            if not clean_admin_pwd or clean_admin_pwd in ("AdminSecure123!", "admin", "password", "changeme"):
+                raise ValueError(
+                    "CRITICAL SECURITY CONFIGURATION: In production mode (DEMO_MODE=false), "
+                    "ADMIN_PASSWORD must be explicitly configured via Render environment variables. "
+                    "Do not use default or placeholder passwords."
+                )
+            self.admin_password: str = clean_admin_pwd
+        else:
+            # When DEMO_MODE=true or in local development:
+            # Use configured ADMIN_PASSWORD if provided; otherwise use standard demo password
+            if clean_admin_pwd and clean_admin_pwd != "AdminSecure123!":
+                self.admin_password = clean_admin_pwd
+            else:
+                self.admin_password = "AdminSecure123!"
 
         # Storage & Upload Limits
         self.upload_dir = Path(os.getenv("UPLOAD_DIR", self.storage_dir / "uploads"))
