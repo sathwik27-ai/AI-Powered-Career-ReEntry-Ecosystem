@@ -1,4 +1,4 @@
-# ReStartHer: AI-Powered Career Re-Entry Ecosystem for Women in Techn
+# ReStartHer: AI-Powered Career Re-Entry Ecosystem for Women in Tech
 
 <div align="center">
 
