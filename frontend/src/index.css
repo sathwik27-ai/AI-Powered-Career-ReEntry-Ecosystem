@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary-rgb: 250 248 253;
+    --bg-secondary-rgb: 243 238 250;
+    --bg-surface-rgb: 255 255 255;
+    --text-primary-rgb: 30 18 49;
+    --text-secondary-rgb: 74 62 94;
+    --text-muted-rgb: 126 112 146;
+
+    --bg-primary: #FAF8FD;
+    --bg-secondary: #F3EEFA;
+    --bg-surface: #FFFFFF;
+    --text-primary: #1E1231;
+    --text-secondary: #4A3E5E;
+    --text-muted: #7E7092;
+    --border-line: rgba(142, 92, 255, 0.16);
+    --border-strong: rgba(142, 92, 255, 0.32);
+    --shadow-jelly: 0 10px 30px -6px rgba(142, 92, 255, 0.12), 0 4px 12px -2px rgba(255, 92, 138, 0.08);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(255, 92, 138, 0.04) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(77, 141, 255, 0.05) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(142, 92, 255, 0.04) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    font-family: 'Nunito', 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+
+  [data-theme="dark"] body {
+    background-image: radial-gradient(circle at 50% 0%, rgba(142, 92, 255, 0.06) 0%, transparent 60%);
+  }
+
+  ::selection {
+    background-color: rgba(142, 92, 255, 0.25);
+    color: var(--text-primary);
+  }
+
+  /* Suppress floating bottom-right circular icons so chatbots stay strictly inside page cards */
+  [id*="jfAgent"],
+  [class*="jfAgent"],
+  iframe[id*="jfAgent"],
+  div[style*="z-index: 2147483647"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px #8E5CFF;
+  }
+}
+
+@layer components {
+  /* Jelly Card: 20-28px radius, translucent surface, soft colorful drop shadow */
+  .card, .jelly-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-line);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-jelly);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  }
+
+  .card:hover, .jelly-card:hover {
+    box-shadow: 0 14px 36px -8px rgba(142, 92, 255, 0.16), 0 6px 16px -2px rgba(255, 92, 138, 0.1);
+  }
+
+  .jelly-gradient-text {
+    background: linear-gradient(135deg, #8E5CFF 0%, #FF5C8A 45%, #FF9A3D 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Glass panel effect */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 1.25rem;
+  }
+
+  [data-theme="dark"] .glass-card {
+    background: rgba(36, 26, 59, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(142, 92, 255, 0.2);
+  }
+
+  /* Typography scale */
+  .page-title {
+    font-size: 1.875rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .stat-value {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  .field {
+    height: 2.75rem;
+    width: 100%;
+    border-radius: 0.875rem;
+    border: 1px solid var(--border-strong);
+    background-color: var(--bg-surface);
+    padding: 0 0.875rem;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .field:focus {
+    outline: none;
+    border-color: #8E5CFF;
+    box-shadow: 0 0 0 3px rgba(142, 92, 255, 0.18);
+  }
+
+  /* Jelly Button with squish effect */
+  .jelly-btn {
+    border-radius: 9999px;
+    font-weight: 700;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(142, 92, 255, 0.25);
+  }
+
+  .jelly-btn:hover {
+    transform: translateY(-1px) scale(1.02);
+  }
+
+  .jelly-btn:active {
+    transform: scale(0.96);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .jelly-btn, .card, .jelly-card {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
+}

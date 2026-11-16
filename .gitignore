@@ -1,0 +1,74 @@
+# ===================== Python =====================
+# Virtual environments
+backend/.venv/
+.venv/
+venv/
+env/
+ENV/
+
+# Bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# ===================== Secrets =====================
+.env
+.env.*
+*.env
+!.env.example
+*.pem
+*.key
+secrets.json
+
+# ===================== Databases =====================
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# ===================== Private user data =====================
+# Runtime storage: SQLite DB, uploaded resumes, generated documents
+backend/storage/
+backend/uploads/
+uploads/
+# Generated personal documents (tailored resumes, cover letters, exports)
+backend/generated/
+generated/
+exports/
+
+# ===================== Node / frontend =====================
+node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# ===================== Editors / OS =====================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===================== Logs / temp =====================
+*.log
+*.tmp
+tmp/
+temp/
+
+# Local Claude Code configuration
+.claude/
