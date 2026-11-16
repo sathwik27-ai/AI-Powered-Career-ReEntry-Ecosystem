@@ -1,4 +1,4 @@
-# ReStartHer: AI-Powered Career Re-Entry Ecosystem for Women in Tech
+# ReStartHer: AI-Powered Career Re-Entry Ecosystem for Women in Techn
 
 <div align="center">
 
@@ -45,7 +45,7 @@ A career pause for caregiving, maternity, relocation, or recovery is **not a han
 
 Each agent operates with specialized domain intelligence and verified 2026 industry knowledge to guide learners through every step of their return-to-work journey:
 
-| Agent | Theme | Domain & Role | Core Strengths |
+| Agent | Theme | Domain and Role | Core Strengths |
 | :--- | :---: | :--- | :--- |
 | **Profile Intake AI** | `Aqua` | **Onboarding & Background Intelligence** | • Normalizes 1–10+ year career pauses with zero penalty<br>• Discovers transferable skills and prior project history<br>• Identifies ideal daily commitment (1–2 hrs/day) and track match |
 | **Skill Gap Explainer AI** | `Tangerine` | **2026 Industry Benchmark Diagnostic** | • Explains ecosystem shifts (Java 8 → 21, Spring Boot 2 → 3, React Hooks)<br>• Categorizes gaps into Critical Refresh, Benchmark, and Bonus Edge<br>• Erases tech intimidation with plain-language context |
